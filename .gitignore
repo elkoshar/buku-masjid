@@ -1,18 +1,63 @@
+# Dependencies
 /node_modules
+/vendor
+
+# Production builds and cache
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
-/.idea
-/.vscode
-/.vagrant
-/.yarn
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
+
+# Laravel cache and compiled files
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+/storage/app/*
+!/storage/app/.gitkeep
+!/storage/app/public/
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+# Environment files (keep templates)
 .env
 .env.backup
+.env.local
+
+# Test and debug files
 .phpunit.result.cache
 .phpunit.cache/
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# IDE and editor files
+/.idea
+/.vscode
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Vagrant
+/.vagrant
+Homestead.json
+Homestead.yaml
+
+# Yarn
+/.yarn
 .yarnrc.yml
+
+# Docker volumes and data (don't ignore Docker configs)
+/docker/data/
+/docker/logs/

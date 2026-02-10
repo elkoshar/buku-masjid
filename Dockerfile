@@ -29,6 +29,10 @@ USER $PUID:$PGID
 # - To ignore files or folders, use .dockerignore
 COPY --chown=$PUID:$PGID . .
 
+# Copy and set up entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 RUN composer install --optimize-autoloader --no-dev --no-interaction --no-progress --ansi
 COPY .env.example .env.tmp
 RUN sed 's/DB_HOST=127.0.0.1/DB_HOST=mysql_host/' .env.tmp > .env && rm .env.tmp
@@ -40,3 +44,7 @@ RUN php ./artisan key:generate && \
     php ./artisan route:cache && \
     php ./artisan config:cache && \
     php ./artisan storage:link
+
+# Fix permissions for Laravel directories
+RUN chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
