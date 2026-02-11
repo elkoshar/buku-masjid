@@ -16,12 +16,16 @@ ENV APP_DEBUG=false
 # Required Modules
 USER root:root
 RUN apt-get update && \
-    apt-get install -y libpng-dev libicu-dev && \
+    apt-get install -y libpng-dev libicu-dev git unzip && \
     docker-php-ext-configure intl && \
     docker-php-ext-install pdo_mysql gd intl && \
     docker-php-ext-enable intl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+# Configure Composer
+RUN composer config --global process-timeout 2000 && \
+    composer config --global repos.packagist composer https://packagist.org
 
 # Copy contents.
 # - To ignore files or folders, use .dockerignore
@@ -31,7 +35,9 @@ COPY --chown=www-data:www-data . .
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-RUN composer install --optimize-autoloader --no-dev --no-interaction --no-progress --ansi
+# Install PHP dependencies with retry logic
+RUN composer install --optimize-autoloader --no-dev --no-interaction --no-progress --prefer-dist || \
+    (sleep 10 && composer install --optimize-autoloader --no-dev --no-interaction --no-progress --prefer-source)
 
 # Setup environment file
 RUN if [ ! -f .env ]; then \
