@@ -4,10 +4,10 @@ echo "=== Docker Compose Status ==="
 docker-compose ps
 
 echo -e "\n=== Container Logs (Server) ==="
-docker-compose logs --tail=50 server 2>/dev/null || echo "Server container not running"
+docker-compose logs server 2>/dev/null || echo "Server container not running"
 
 echo -e "\n=== Container Logs (MySQL) ==="
-docker-compose logs --tail=50 mysql
+docker-compose logs mysql 2>/dev/null || echo "MySQL container not running"
 
 echo -e "\n=== MySQL Container Details ==="
 docker inspect $(docker-compose ps -q mysql) 2>/dev/null | grep -A 5 -B 5 "RestartCount\|Status\|Error" || echo "MySQL container details not available"
