@@ -23,19 +23,21 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-USER $PUID:$PGID
-
 # Copy contents.
 # - To ignore files or folders, use .dockerignore
-COPY --chown=$PUID:$PGID . .
+COPY --chown=www-data:www-data . .
 
 # Copy and set up entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN composer install --optimize-autoloader --no-dev --no-interaction --no-progress --ansi
-COPY .env.example .env.tmp
-RUN sed 's/DB_HOST=127.0.0.1/DB_HOST=mysql_host/' .env.tmp > .env && rm .env.tmp
+
+# Setup environment file
+RUN if [ ! -f .env ]; then \
+        cp .env.example .env && \
+        sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql/' .env; \
+    fi
 
 # artisan commands
 RUN php ./artisan key:generate && \
