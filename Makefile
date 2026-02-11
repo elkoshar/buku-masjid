@@ -207,8 +207,11 @@ debug: ## Debug application issues
 	@echo "$(BLUE)Server Container Logs (last 30 lines):$(NC)"
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=30 server
 	@echo ""
-	@echo "$(BLUE)MySQL Container Logs (last 10 lines):$(NC)"
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=10 mysql
+	@echo "$(BLUE)Laravel Error Logs:$(NC)"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) exec server tail -20 /var/www/html/storage/logs/laravel.log 2>/dev/null || echo "$(YELLOW)No Laravel logs found$(NC)"
+	@echo ""
+	@echo "$(BLUE)MySQL Container Logs (last 15 lines):$(NC)"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=15 mysql
 	@echo ""
 	@echo "$(BLUE)Network Test:$(NC)"
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) exec server curl -v http://localhost:8080 || echo "$(RED)Internal curl failed$(NC)"

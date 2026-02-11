@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8080:8080"
     depends_on:
       - mysql
     environment:
@@ -15,7 +15,10 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - APP_ENV=production
-      - APP_DEBUG=false
+      - APP_DEBUG=true
+      - APP_PORT=8080
+      - AUTORUN_ENABLED=true
+      - SSL_MODE=off
       - PHP_OPCACHE_ENABLE=1
       - PHP_OPCACHE_MEMORY_CONSUMPTION=256
       - PUID=1000
@@ -54,14 +57,9 @@ services:
       - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
-      - --innodb-buffer-pool-size=256M
-      - --max-connections=100
+      - --innodb-buffer-pool-size=128M
+      - --max-connections=50
       - --performance-schema=0
-      - --table-open-cache=400
-      - --table-definition-cache=400
-      - --innodb-log-file-size=128M
-      - --innodb-flush-log-at-trx-commit=2
-      - --innodb-flush-method=O_DIRECT
       - --skip-name-resolve
       - --bind-address=0.0.0.0
     environment:

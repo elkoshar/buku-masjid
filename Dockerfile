@@ -2,8 +2,10 @@
 # Base Stage
 # ================
 FROM serversideup/php:8.1-fpm-nginx AS base
-ENV AUTORUN_ENABLED=false
+ENV AUTORUN_ENABLED=true
 ENV SSL_MODE=off
+ENV WEBUSER_UID=1000
+ENV WEBUSER_GID=1000
 
 # ================
 # Production Stage
