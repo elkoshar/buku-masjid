@@ -157,13 +157,15 @@ status: ## Show status of all containers
 
 health: ## Check health of all services
 	@echo "$(BLUE)Health Check:$(NC)"
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) ps
 	@echo ""
 	@echo "$(BLUE)Testing application endpoint...$(NC)"
 	@if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 | grep -q "200"; then \
 		echo "$(GREEN)✓ Application is responding$(NC)"; \
 	else \
 		echo "$(RED)✗ Application is not responding$(NC)"; \
+		echo "$(YELLOW)Checking server logs:$(NC)"; \
+		docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=20 server; \
 	fi
 
 # Backup and Restore
@@ -196,6 +198,20 @@ update: ## Update application to latest version
 	@$(MAKE) migrate
 	@$(MAKE) optimize
 	@echo "$(GREEN)Update completed!$(NC)"
+
+# Debugging Commands
+debug: ## Debug application issues
+	@echo "$(BLUE)Container Status:$(NC)"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) ps
+	@echo ""
+	@echo "$(BLUE)Server Container Logs (last 30 lines):$(NC)"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=30 server
+	@echo ""
+	@echo "$(BLUE)MySQL Container Logs (last 10 lines):$(NC)"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs --tail=10 mysql
+	@echo ""
+	@echo "$(BLUE)Network Test:$(NC)"
+	@docker-compose -f $(DOCKER_COMPOSE_FILE) exec server curl -v http://localhost:8080 || echo "$(RED)Internal curl failed$(NC)"
 
 # Development Commands
 shell: ## Access application container shell
