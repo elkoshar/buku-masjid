@@ -223,6 +223,22 @@ fix-mysql: ## Stop everything and restart MySQL with minimal config
 	@echo "$(BLUE)MySQL Status:$(NC)"
 	@docker-compose ps mysql
 	@docker-compose logs mysql
+
+reset-mysql: ## Completely reset MySQL data and start fresh (DESTRUCTIVE)
+	@echo "$(RED)WARNING: This will DELETE all MySQL data!$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C within 10 seconds to cancel...$(NC)"
+	@sleep 10
+	@echo "$(YELLOW)Stopping all services...$(NC)"
+	@docker-compose down -v
+	@echo "$(YELLOW)Removing MySQL volume...$(NC)"
+	@docker volume rm buku-masjid_database_data 2>/dev/null || true
+	@echo "$(BLUE)Starting MySQL with fresh data...$(NC)"
+	@docker-compose up -d mysql
+	@echo "$(BLUE)Waiting for MySQL to initialize...$(NC)"
+	@sleep 30
+	@echo "$(GREEN)MySQL reset complete! Running migrations...$(NC)"
+	@$(MAKE) migrate
+	@echo "$(GREEN)Reset completed successfully!$(NC)"
 debug: ## Debug application issues
 	@echo "$(BLUE)Container Status:$(NC)"
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) ps

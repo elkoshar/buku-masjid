@@ -54,11 +54,15 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --skip-name-resolve
       - --bind-address=0.0.0.0
+      - --sql-mode=STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO
+      - --max-connections=100
+      - --innodb-buffer-pool-size=128M
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_INITDB_SKIP_TZINFO: 1
     volumes:
       - database_data:/var/lib/mysql
     networks:
