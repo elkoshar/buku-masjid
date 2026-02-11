@@ -1,14 +1,14 @@
 # ================
 # Base Stage
 # ================
-FROM serversideup/php:8.1-fpm-nginx as base
+FROM serversideup/php:8.1-fpm-nginx AS base
 ENV AUTORUN_ENABLED=false
 ENV SSL_MODE=off
 
 # ================
 # Production Stage
 # ================
-FROM base as production
+FROM base AS production
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
