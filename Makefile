@@ -199,7 +199,30 @@ update: ## Update application to latest version
 	@$(MAKE) optimize
 	@echo "$(GREEN)Update completed!$(NC)"
 
-# Debugging Commands
+# Troubleshooting Commands
+troubleshoot: ## Comprehensive troubleshooting for startup issues
+	@echo "$(BLUE)System Resources:$(NC)"
+	@echo "Memory:" && free -h
+	@echo "Disk:" && df -h
+	@echo ""
+	@echo "$(BLUE)Docker Resources:$(NC)"
+	@docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+	@echo ""
+	@echo "$(BLUE)MySQL Restart Issues:$(NC)"
+	@docker-compose logs mysql | grep -E "(ERROR|FATAL|restart|exit|died)" || echo "No critical MySQL errors found"
+	@echo ""
+	@echo "$(BLUE)Manual MySQL Test:$(NC)"
+	@docker run --rm mysql:8.0 --version
+
+fix-mysql: ## Stop everything and restart MySQL with minimal config
+	@echo "$(YELLOW)Stopping all services...$(NC)"
+	@docker-compose down -v
+	@echo "$(BLUE)Starting MySQL alone with minimal config...$(NC)"
+	@docker-compose up -d mysql
+	@sleep 15
+	@echo "$(BLUE)MySQL Status:$(NC)"
+	@docker-compose ps mysql
+	@docker-compose logs mysql
 debug: ## Debug application issues
 	@echo "$(BLUE)Container Status:$(NC)"
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) ps
