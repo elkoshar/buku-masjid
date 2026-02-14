@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
     hostname: mysql
     ports:
-      - "38760:3306"
+      - "${MYSQL_EXTERNAL_PORT}:3306"
     command:
       - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4
